@@ -31,12 +31,10 @@ class Browser(QMainWindow):
         self.init_ui()
 
     def init_ui(self):
-        # Ad blocker setup
         profile = QWebEngineProfile.defaultProfile()
         ad_blocker = AdBlocker(self.ad_domains)
         profile.setRequestInterceptor(ad_blocker)
 
-        # Tabs and browser setup
         self.tabs = QTabWidget()
         self.tabs.setTabsClosable(True)
         self.tabs.setMovable(True)
@@ -44,10 +42,8 @@ class Browser(QMainWindow):
         self.tabs.tabBarDoubleClicked.connect(self.add_new_tab)
         self.setCentralWidget(self.tabs)
 
-        # Add the first tab
         self.add_new_tab(QUrl("https://www.google.com"), "New Tab")
 
-        # Toolbar setup
         self.url_bar = QLineEdit()
         self.url_bar.returnPressed.connect(self.navigate_to_url)
         self.url_bar.setPlaceholderText("Search or enter a URL")
@@ -72,7 +68,6 @@ class Browser(QMainWindow):
         self.bookmarks_button = self.create_toolbar_button("★", "Bookmarks", self.show_bookmarks)
         self.new_tab_button = self.create_toolbar_button("+", "New Tab", lambda: self.add_new_tab())
 
-        # Toolbar layout
         toolbar_layout = QHBoxLayout()
         toolbar_layout.setSpacing(10)
         toolbar_layout.setContentsMargins(10, 5, 10, 5)
@@ -84,12 +79,10 @@ class Browser(QMainWindow):
         toolbar_layout.addWidget(self.url_bar)
         toolbar_layout.addWidget(self.new_tab_button)
 
-        # Toolbar widget
         toolbar = QWidget()
         toolbar.setLayout(toolbar_layout)
         toolbar.setStyleSheet("background-color: #1E1E1E; border-bottom: 1px solid #444;")
 
-        # Main layout
         main_layout = QVBoxLayout()
         main_layout.addWidget(toolbar)
         main_layout.addWidget(self.tabs)
@@ -98,7 +91,6 @@ class Browser(QMainWindow):
         container.setLayout(main_layout)
         self.setCentralWidget(container)
 
-        # Window settings
         self.setWindowTitle("Stark Internet Browser")
         self.setGeometry(100, 100, 1024, 768)
         self.setStyleSheet("QMainWindow { background-color: #121212; }")
