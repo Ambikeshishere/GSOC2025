@@ -1,17 +1,41 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QLineEdit, QPushButton, QHBoxLayout
-from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtCore import QUrl
+from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineProfile
+from PyQt5.QtCore import QUrl, QObject
+from PyQt5.QtWebEngineCore import QWebEngineUrlRequestInterceptor
+
+class AdBlocker(QWebEngineUrlRequestInterceptor):
+    def __init__(self, ad_domains):
+        super().__init__()
+        self.ad_domains = ad_domains
+
+    def interceptRequest(self, info):
+        url = info.requestUrl().toString()
+        for domain in self.ad_domains:
+            if domain in url:
+                print(f"Blocked: {url}")  # For debugging purposes
+                info.block(True)
+                return
 
 class Browser(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.ad_domains = self.load_ad_domains()
+
+        # Create a web engine profile and set the ad blocker
+        profile = QWebEngineProfile.defaultProfile()
+        ad_blocker = AdBlocker(self.ad_domains)
+        profile.setRequestInterceptor(ad_blocker)
+
+        # Set up the browser view
         self.browser = QWebEngineView()
         self.browser.setUrl(QUrl("https://www.google.com"))
 
+        # URL bar
         self.url_bar = QLineEdit()
         self.url_bar.returnPressed.connect(self.navigate_to_url)
 
+        # Navigation buttons
         self.back_button = QPushButton("Back")
         self.back_button.clicked.connect(self.browser.back)
 
@@ -31,6 +55,7 @@ class Browser(QMainWindow):
         self.bookmarks_button = QPushButton("Show Bookmarks")
         self.bookmarks_button.clicked.connect(self.show_bookmarks)
 
+        # Layout setup
         top_layout = QHBoxLayout()
         top_layout.addWidget(self.back_button)
         top_layout.addWidget(self.next_button)
@@ -46,8 +71,21 @@ class Browser(QMainWindow):
         layout.addWidget(self.browser)
 
         self.setCentralWidget(central_widget)
-        self.setWindowTitle("Python Browser")
+        self.setWindowTitle("Python Browser with AdBlocker")
         self.setGeometry(100, 100, 1024, 768)
+
+    def load_ad_domains(self):
+        # Example list of ad-serving domains
+        # Ideally, this would be loaded from a file or online source
+        return [
+            "doubleclick.net",
+            "adservice.google.com",
+            "googlesyndication.com",
+            "ads.pubmatic.com",
+            "amazon-adsystem.com",
+            "adroll.com",
+            "taboola.com"
+        ]
 
     def navigate_to_url(self):
         url = self.url_bar.text()
@@ -69,10 +107,7 @@ class Browser(QMainWindow):
             self.browser.setHtml(f"<h1>Bookmarks</h1><ul>{''.join(f'<li><a href="{b}">{b}</a></li>' for b in self.bookmarks)}</ul>")
         else:
             self.browser.setHtml("<h1>No bookmarks added</h1>")
-#Sankalpdewa
 
-
-#Code Updated
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = Browser()
