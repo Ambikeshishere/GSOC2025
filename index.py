@@ -71,6 +71,7 @@ class Browser(QMainWindow):
             self.browser.setHtml("<h1>No bookmarks added</h1>")
 
 
+#Code Updated
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = Browser()
