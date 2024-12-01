@@ -69,6 +69,7 @@ class Browser(QMainWindow):
             self.browser.setHtml(f"<h1>Bookmarks</h1><ul>{''.join(f'<li><a href="{b}">{b}</a></li>' for b in self.bookmarks)}</ul>")
         else:
             self.browser.setHtml("<h1>No bookmarks added</h1>")
+#Sankalpdewa
 
 
 #Code Updated
