@@ -13,7 +13,7 @@ class AdBlocker(QWebEngineUrlRequestInterceptor):
         url = info.requestUrl().toString()
         for domain in self.ad_domains:
             if domain in url:
-                print(f"Blocked: {url}")  # For debugging purposes
+                print(f"Blocked: {url}")
                 info.block(True)
                 return
 
@@ -22,20 +22,16 @@ class Browser(QMainWindow):
         super().__init__()
         self.ad_domains = self.load_ad_domains()
 
-        # Create a web engine profile and set the ad blocker
         profile = QWebEngineProfile.defaultProfile()
         ad_blocker = AdBlocker(self.ad_domains)
         profile.setRequestInterceptor(ad_blocker)
 
-        # Set up the browser view
         self.browser = QWebEngineView()
         self.browser.setUrl(QUrl("https://www.google.com"))
 
-        # URL bar
         self.url_bar = QLineEdit()
         self.url_bar.returnPressed.connect(self.navigate_to_url)
 
-        # Navigation buttons
         self.back_button = QPushButton("Back")
         self.back_button.clicked.connect(self.browser.back)
 
@@ -55,7 +51,6 @@ class Browser(QMainWindow):
         self.bookmarks_button = QPushButton("Show Bookmarks")
         self.bookmarks_button.clicked.connect(self.show_bookmarks)
 
-        # Layout setup
         top_layout = QHBoxLayout()
         top_layout.addWidget(self.back_button)
         top_layout.addWidget(self.next_button)
@@ -71,12 +66,10 @@ class Browser(QMainWindow):
         layout.addWidget(self.browser)
 
         self.setCentralWidget(central_widget)
-        self.setWindowTitle("Python Browser with AdBlocker")
+        self.setWindowTitle("Stark Internet Browser")
         self.setGeometry(100, 100, 1024, 768)
 
     def load_ad_domains(self):
-        # Example list of ad-serving domains
-        # Ideally, this would be loaded from a file or online source
         return [
             "doubleclick.net",
             "adservice.google.com",
@@ -101,12 +94,6 @@ class Browser(QMainWindow):
         if current_url not in self.bookmarks:
             self.bookmarks.append(current_url)
 
-    # def show_bookmarks(self):
-    #     if self.bookmarks:
-    #         bookmark_list = "\n".join(self.bookmarks)
-    #         self.browser.setHtml(f"<h1>Bookmarks</h1><ul>{''.join(f'<li><a href="{b}">{b}</a></li>' for b in self.bookmarks)}</ul>")
-    #     else:
-
     def show_bookmarks(self):
         if self.bookmarks:
             bookmarks_html = "".join([f'<li><a href="{b}">{b}</a></li>' for b in self.bookmarks])
@@ -114,8 +101,6 @@ class Browser(QMainWindow):
             self.browser.setHtml(html_content)
         else:
             self.browser.setHtml("<h1>No bookmarks added</h1>")
-#Sankalpdewa
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
